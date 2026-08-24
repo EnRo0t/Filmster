@@ -1,0 +1,260 @@
+#include <iostream>
+#include <fstream> // para manipular archivos
+#include <string>
+#include <limits> // Necesario para numeric_limits
+#include <vector> // Para incluir vectores
+#include "json.hpp" // Para trabajar con json (persistencia de datos)
+#include <unistd.h>
+
+using json = nlohmann::json;
+using namespace std;
+
+class Pelicula {
+		//Visibilidad
+		public:
+		//Atributos
+				string nombre;
+				string genero;
+				float puntuacion;
+				// Constructor
+				Pelicula(string n, string g, float p) {
+						nombre = n;
+						genero = g;
+						puntuacion = p;
+				}
+
+};
+
+vector<Pelicula> peliculas;
+
+// Cargar el vector con los datos del json
+vector<Pelicula> cargarPeliculas() {
+    vector<Pelicula> peliculas;
+    ifstream archivo("peliculas.json");
+    
+    if (!archivo.is_open()) {
+        return peliculas; // si no existe el archivo, devuelve vector vacío
+    }
+    
+    json j;
+    archivo >> j;
+    archivo.close();
+    
+    for (auto& item : j) {
+        Pelicula p(item["nombre"], item["genero"], item["puntuacion"]);
+        peliculas.push_back(p);
+    }
+    
+    return peliculas;
+}
+
+// Guardar pelicula en un JSON
+void guardarPeliculas(vector<Pelicula>& peliculas) {
+    json j = json::array();
+    
+    for (int i = 0; i < peliculas.size(); i++) {
+        j.push_back({
+            {"id", i},
+            {"nombre", peliculas[i].nombre},
+            {"genero", peliculas[i].genero},
+            {"puntuacion", peliculas[i].puntuacion}
+        });
+    }
+    
+    ofstream archivo("peliculas.json");
+    archivo << j.dump(4); // el 4 es la indentación, para que quede legible
+    archivo.close();
+}
+
+// Sirve para exportar en .md la lista de películas
+void exportarPeliculas() {
+	int contador = 0;
+	// Lo abro en modo truncar para resetear el archivo
+	ofstream Registro("peliculas.md");
+
+	/* ofstream Registro("peliculas.md", ios::app); ios::app permite que no se borre el contenido previo del archivo */
+	for(Pelicula pelicula : peliculas ) {
+				Registro << "###" << " " << contador << "\n";
+				Registro << "Nombre: " << peliculas.at(contador).nombre << "\n";
+				Registro << "Genero: " << peliculas.at(contador).genero << "\n";
+				Registro << "Puntuacion: " << peliculas.at(contador).puntuacion << "\n";
+				Registro << "---" << "\n";
+				contador++;
+				
+		}
+				Registro.close(); // Cierra el archivo
+	}
+
+void verPeliculas() {
+		string myText;
+		ifstream archivo("peliculas.md"); // Abrimos el archivo
+		while(getline (archivo, myText)) {
+				cout << myText << "\n";
+		}
+		archivo.close();
+}
+
+int cli() {
+		
+		bool opcionErronea = true;
+		int opcion; 
+		while(opcionErronea) {
+						cout << "---------------------------" << "\n";
+						cout << "Escoja una opción" << "\n" << "\n";
+						cout << "1: Registrar película" << "\n";
+						cout << "2: Leer películas registradas" << "\n";
+						cout << "3: Modificar película" << "\n";
+						cout << "4: Exportar lista a markdown" << "\n";
+						cout << "---------------------------" << "\n" << "\n";
+						cin >> opcion;
+						if(opcion == 1 || opcion == 2 || opcion == 3 || opcion ==4) {
+								opcionErronea = false;
+						} else {
+								cout << "Introduce una opción válida" << "\n";
+								cin.clear(); // Borramos buffer de entrada
+								cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Para ignorar valores no INT 
+						}
+
+				}
+						return opcion;
+		}
+
+bool continuar() {
+    string confirmacion;
+    
+    cout << "¿Deseas continuar?" << "\n";
+    cout << "S | N" << "\n";
+    
+    cin.ignore(); // Limpia cualquier 'Enter' residual de operaciones previas
+    cin >> confirmacion;
+
+    // Retorna true de forma directa si la condición se cumple, o false si no
+    return (confirmacion == "S" || confirmacion == "s");
+}
+
+void modificarPelicula() {
+		int id;
+		string opcion;
+		string nuevoNombre;
+		string nuevoGenero;
+		float nuevaPuntuacion;
+
+		cout << "---------------------" << "\n";
+		cout << "Que película quieres modificar. Introduce ID" << "\n";
+		cin >> id;
+		cout << "¿Qué quieres modificar?" << "\n";
+		cout << "Nombre | Genero | Puntuación" << "\n";
+		cin >> opcion;
+		if(opcion == "nombre" || opcion == "Nombre") {
+				cout << peliculas.at(id).nombre << "\n";
+				cout << "¿Qué nuevo nombre quieres ponerle?" << "\n";
+				cin.ignore();
+				getline(cin, nuevoNombre);
+				peliculas.at(id).nombre = nuevoNombre;
+				cout << "El nuevo nombre es: " << peliculas.at(id).nombre << "\n";
+		}
+		if(opcion == "genero" || opcion == "Genero") {	
+				cout << peliculas.at(id).genero << "\n";
+				cout << "¿Qué nuevo genero quieres ponerle?" << "\n";
+				cin.ignore();
+				getline(cin, nuevoGenero);
+				peliculas.at(id).genero = nuevoGenero;
+				cout << "El nuevo genero es: " << peliculas.at(id).genero << "\n";
+		} 
+		if(opcion == "puntuacion" || opcion == "Puntuacion") {	
+				cout << peliculas.at(id).puntuacion << "\n";
+				cout << "¿Qué nuevo nombre quieres ponerle?" << "\n";
+				cin >> nuevaPuntuacion;
+				peliculas.at(id).puntuacion = nuevaPuntuacion;
+				cout << peliculas.at(id).puntuacion << "\n";
+		}
+}
+
+void prePeliculas() {
+		int contador = 0;
+		for(Pelicula pelicula : peliculas) {
+
+				cout << "+--------------------------------+" << "\n";
+				cout << "Id: " << contador << "\n";
+				cout << "Nombre: " << pelicula.nombre << "\n";
+				cout << "Genero: " << pelicula.genero << "\n";
+				cout << "Puntuacion: " << pelicula.puntuacion << "\n";
+				cout << "\n";
+				contador++;
+		}
+} 
+
+int main() {
+		peliculas = cargarPeliculas();
+		bool activo = true;
+		while(activo) {
+				int opcion = cli();
+				switch(opcion) {
+						case 1:{ 
+												
+								string nombre, genero;
+								float puntuacion;
+									
+								cout << "Introduce el nombre de la película" << "\n";
+								cin.ignore(); // Para limpiar el buffer
+								getline(cin, nombre); // Getline sirve para permitir espacios en el titulo
+								cout << "Introduce el genero" << "\n";
+								getline(cin, genero);
+
+								cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
+								cin >> puntuacion;
+
+								Pelicula pelicula(nombre, genero, puntuacion);
+								// Guardo la película dentro del vector
+								peliculas.push_back(pelicula);
+								// Guardo la película dentro del json
+								guardarPeliculas(peliculas);
+
+								cout << "Película registrada correctamente" << "\n";
+
+								activo = continuar();
+						break;
+							   }
+							   
+						case 2:
+								prePeliculas();
+								activo = continuar();
+						break;
+						case 3:
+								modificarPelicula();
+								guardarPeliculas(peliculas);
+								activo = continuar();
+						break;
+						case 4:{
+								string res;
+								cout << "Exportalndo peliculas..." << "\n";
+								sleep(1);
+								cout << "...." << "\n";
+								exportarPeliculas();
+								cout << "Exportado archivo ./peliculas.md" <<
+										"\n"; 
+								cout << "----------------------------------" <<
+										"\n"; 
+								cout << "¿Quieres ver el archivo exportado?" <<
+										"\n";
+								cout << "Si | No" << "\n";
+								cin >> res;
+								if(res == "Si" || res == "si" ||
+												res == "s") {
+										verPeliculas(); 
+								} else {
+										activo = continuar();
+								}
+							   
+						break;
+							   }
+						default:
+						cout << "Bye Bye" << "\n";
+						activo = false;
+						break;
+				
+		}
+}
+		return 0;
+}
+

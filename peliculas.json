@@ -1,0 +1,38 @@
+[
+    {
+        "genero": "Terror / Slasher",
+        "id": 0,
+        "nombre": "La matanza de pepito",
+        "puntuacion": 8.0
+    },
+    {
+        "genero": "telol",
+        "id": 1,
+        "nombre": "La matanza de jose",
+        "puntuacion": 1.0
+    },
+    {
+        "genero": "terror",
+        "id": 2,
+        "nombre": "La matanza de manolo",
+        "puntuacion": 1.0
+    },
+    {
+        "genero": "terror pero terror terror",
+        "id": 3,
+        "nombre": "La matanza de las matanzas muy muertes",
+        "puntuacion": 10.0
+    },
+    {
+        "genero": "Terror / Slasher",
+        "id": 4,
+        "nombre": "La matanza de texas",
+        "puntuacion": 8.0
+    },
+    {
+        "genero": "Terror",
+        "id": 5,
+        "nombre": "Critters 2",
+        "puntuacion": 0.0
+    }
+]

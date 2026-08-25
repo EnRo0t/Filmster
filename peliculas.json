@@ -28,5 +28,17 @@
         "id": 4,
         "nombre": "Critters 2",
         "puntuacion": 0.0
+    },
+    {
+        "genero": "Terror / Slasher",
+        "id": 5,
+        "nombre": "Halloween 4",
+        "puntuacion": 6.5
+    },
+    {
+        "genero": "Terror / Gore",
+        "id": 6,
+        "nombre": "Braindead",
+        "puntuacion": 6.5
     }
 ]

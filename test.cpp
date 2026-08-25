@@ -9,6 +9,8 @@
 using json = nlohmann::json;
 using namespace std;
 
+const string CAMBIOS = "Los cambios se han producido correctamente";
+
 class Pelicula {
 		//Visibilidad
 		public:
@@ -86,16 +88,35 @@ void borrarPeliculas(vector<Pelicula>& peliculas) {
 
 // Sirve para exportar en .md la lista de películas
 void exportarPeliculas() {
+    const string STAR_1 = "■";
+	const string STAR_2 = "■■";
+	const string STAR_3 = "■■■";
+	const string STAR_4 = "■■■■";
+	const string STAR_5 = "■■■■■";
+
 	int contador = 0;
 	// Lo abro en modo truncar para resetear el archivo
 	ofstream Registro("peliculas.md");
 
 	/* ofstream Registro("peliculas.md", ios::app); ios::app permite que no se borre el contenido previo del archivo */
 	for(Pelicula pelicula : peliculas ) {
+				float puntuacion =  peliculas.at(contador).puntuacion;
+			    string puntuacionStar;
+				if(puntuacion <= 2) {
+						puntuacionStar = STAR_1;
+				}else if(puntuacion <= 4) {
+						puntuacionStar = STAR_2;
+				}else if(puntuacion <= 6) {
+						puntuacionStar = STAR_3;
+				}else if(puntuacion <= 8) {
+						puntuacionStar = STAR_4;
+				}else {
+						puntuacionStar = STAR_5;
+				}
 				Registro << "###" << " " << contador << "\n";
 				Registro << "Nombre: " << peliculas.at(contador).nombre << "\n";
 				Registro << "Genero: " << peliculas.at(contador).genero << "\n";
-				Registro << "Puntuacion: " << peliculas.at(contador).puntuacion << "\n";
+				Registro << "Puntuacion: " << puntuacionStar << " " << puntuacion << "\n";
 				Registro << "---" << "\n";
 				contador++;
 				
@@ -117,14 +138,16 @@ int cli() {
 		bool opcionErronea = true;
 		int opcion; 
 		while(opcionErronea) {
-						cout << "---------------------------" << "\n";
-						cout << "Escoja una opción" << "\n" << "\n";
-						cout << "1: Registrar película" << "\n";
-						cout << "2: Leer películas registradas" << "\n";
-						cout << "3: Modificar película" << "\n";
-						cout << "4: Exportar lista a markdown" << "\n";
-						cout << "5: Borrar película" << "\n";
-						cout << "---------------------------" << "\n" << "\n";
+						cout << "╔═══════════════════════════╗" << "\n";
+						cout << "║      Escoja una opción    ║" << "\n";
+						cout << "╚═══════════════════════════╝" << "\n";
+						cout << "╔═══════════════════════════╗   " << "\n";
+						cout << "║  1: Registrar película    ║   " << "\n";
+						cout << "║  2: Ver registro          ║   " << "\n";
+						cout << "║  3: Modificar película    ║   " << "\n";
+						cout << "║  4: Exportar lista        ║   " << "\n";
+						cout << "║  5: Borrar película       ║   " << "\n";
+						cout << "╚═══════════════════════════╝   " << "\n" << "\n";
 						cin >> opcion;
 						if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4 || opcion == 5) {
 								opcionErronea = false;
@@ -170,6 +193,7 @@ void modificarPelicula() {
 				cin.ignore();
 				getline(cin, nuevoNombre);
 				peliculas.at(id).nombre = nuevoNombre;
+				cout << CAMBIOS << "\n";
 				cout << "El nuevo nombre es: " << peliculas.at(id).nombre << "\n";
 		}
 		if(opcion == "genero" || opcion == "Genero") {	
@@ -178,14 +202,24 @@ void modificarPelicula() {
 				cin.ignore();
 				getline(cin, nuevoGenero);
 				peliculas.at(id).genero = nuevoGenero;
+				cout << CAMBIOS << "\n";
 				cout << "El nuevo genero es: " << peliculas.at(id).genero << "\n";
 		} 
 		if(opcion == "puntuacion" || opcion == "Puntuacion") {	
 				cout << peliculas.at(id).puntuacion << "\n";
-				cout << "¿Qué nuevo nombre quieres ponerle?" << "\n";
+				cout << "¿Qué nueva puntuacion quieres ponerle?" << "\n";
 				cin >> nuevaPuntuacion;
+				do {
+						cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
+						cin >> nuevaPuntuacion;
+
+						if(nuevaPuntuacion < 0 || nuevaPuntuacion > 10) {
+								cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
+						}
+				} while(nuevaPuntuacion < 0 || nuevaPuntuacion > 10);  
 				peliculas.at(id).puntuacion = nuevaPuntuacion;
-				cout << peliculas.at(id).puntuacion << "\n";
+				cout << CAMBIOS << "\n";
+				cout << "La nueva puntuacion es: " << peliculas.at(id).puntuacion << "\n";
 		}
 }
 
@@ -193,11 +227,12 @@ void prePeliculas() {
 		int contador = 0;
 		for(Pelicula pelicula : peliculas) {
 
-				cout << "+--------------------------------+" << "\n";
-				cout << "Id: " << contador << "\n";
-				cout << "Nombre: " << pelicula.nombre << "\n";
-				cout << "Genero: " << pelicula.genero << "\n";
-				cout << "Puntuacion: " << pelicula.puntuacion << "\n";
+				cout << "┌──────────────────────────────────┐" << "\n";
+				cout << "  Id: " << contador << "\n";
+				cout << "  Nombre: " << pelicula.nombre << "\n";
+				cout << "  Genero: " << pelicula.genero << "\n";
+				cout << "  Puntuacion: " << pelicula.puntuacion << "\n";
+				cout << "└──────────────────────────────────┘" << "\n";
 				cout << "\n";
 				contador++;
 		}
@@ -219,10 +254,16 @@ int main() {
 								getline(cin, nombre); // Getline sirve para permitir espacios en el titulo
 								cout << "Introduce el genero" << "\n";
 								getline(cin, genero);
+								
+								do {
+										cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
+										cin >> puntuacion;
 
-								cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
-								cin >> puntuacion;
-
+										if(puntuacion < 0 || puntuacion > 10) {
+												cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
+										}
+								} while(puntuacion < 0 || puntuacion > 10);  
+				
 								Pelicula pelicula(nombre, genero, puntuacion);
 								// Guardo la película dentro del vector
 								peliculas.push_back(pelicula);

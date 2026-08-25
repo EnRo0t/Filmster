@@ -18,20 +18,14 @@
         "puntuacion": 1.0
     },
     {
-        "genero": "terror pero terror terror",
-        "id": 3,
-        "nombre": "La matanza de las matanzas muy muertes",
-        "puntuacion": 10.0
-    },
-    {
         "genero": "Terror / Slasher",
-        "id": 4,
+        "id": 3,
         "nombre": "La matanza de texas",
         "puntuacion": 8.0
     },
     {
         "genero": "Terror",
-        "id": 5,
+        "id": 4,
         "nombre": "Critters 2",
         "puntuacion": 0.0
     }

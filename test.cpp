@@ -30,14 +30,17 @@ vector<Pelicula> peliculas;
 // Cargar el vector con los datos del json
 vector<Pelicula> cargarPeliculas() {
     vector<Pelicula> peliculas;
+	// Abrimos el archivo json
     ifstream archivo("peliculas.json");
     
     if (!archivo.is_open()) {
         return peliculas; // si no existe el archivo, devuelve vector vacío
     }
-    
+    // Se crea objeto json
     json j;
+	// Cargamos el contenido del archivo al objeto json
     archivo >> j;
+	// Cerramos el archivo
     archivo.close();
     
     for (auto& item : j) {
@@ -50,6 +53,7 @@ vector<Pelicula> cargarPeliculas() {
 
 // Guardar pelicula en un JSON
 void guardarPeliculas(vector<Pelicula>& peliculas) {
+    // Inicializamos un array de tipo json
     json j = json::array();
     
     for (int i = 0; i < peliculas.size(); i++) {
@@ -60,11 +64,25 @@ void guardarPeliculas(vector<Pelicula>& peliculas) {
             {"puntuacion", peliculas[i].puntuacion}
         });
     }
-    
+    // Abrimos el archivo en modo ios::out (borramos el archivo) 
     ofstream archivo("peliculas.json");
     archivo << j.dump(4); // el 4 es la indentación, para que quede legible
     archivo.close();
 }
+
+// Borrar Películas
+void borrarPeliculas(vector<Pelicula>& peliculas) {
+		int id;
+		cout << "Qué película quieres borrar (Id)" << "\n";
+		cin >> id;
+		// Borramos la película del vector
+		peliculas.erase(peliculas.begin() + id);
+		// Cargamos la funcion guardarPeliculas para resetear el json con los cambios
+		guardarPeliculas(peliculas);
+		// Avisamos al usuario
+		cout << "Película borrada" << "\n";
+}
+
 
 // Sirve para exportar en .md la lista de películas
 void exportarPeliculas() {
@@ -105,9 +123,10 @@ int cli() {
 						cout << "2: Leer películas registradas" << "\n";
 						cout << "3: Modificar película" << "\n";
 						cout << "4: Exportar lista a markdown" << "\n";
+						cout << "5: Borrar película" << "\n";
 						cout << "---------------------------" << "\n" << "\n";
 						cin >> opcion;
-						if(opcion == 1 || opcion == 2 || opcion == 3 || opcion ==4) {
+						if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4 || opcion == 5) {
 								opcionErronea = false;
 						} else {
 								cout << "Introduce una opción válida" << "\n";
@@ -248,6 +267,13 @@ int main() {
 							   
 						break;
 							   }
+						case 5:{
+								borrarPeliculas(peliculas);
+								activo = continuar();
+							   
+						break;
+							   }
+							   
 						default:
 						cout << "Bye Bye" << "\n";
 						activo = false;

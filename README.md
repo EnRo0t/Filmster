@@ -1,5 +1,9 @@
 # README
 
+## OBJETIVOS
+
+Este es un proyecto de aprendizaje para entender las bases de C++.
+
 ## INSTALACIÓN
 
 ```sh
@@ -9,4 +13,11 @@ cd build
 cmake ..
 make
 ```
+
+## ROADMAP / TASKLIST
+
++ Añadir covers de las películas mediante llamadas a la api de tmdb utilizando
+  la libreria CPR. 
+
+
 

@@ -3,9 +3,10 @@
 #include <string>
 #include <limits> // Necesario para numeric_limits
 #include <vector> // Para incluir vectores
-#include "json.hpp" // Para trabajar con json (persistencia de datos)
+#include <nlohmann/json.hpp> // Para trabajar con json (persistencia de datos)
 #include <unistd.h>
 #include <filesystem>
+#include <cpr/cpr.h>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;

@@ -1,0 +1,4 @@
+Use ffmpeg for changing image height to 400px and mantain the aspect ratio. 
+
+ffmpeg -i input.webp -vf scale=-1:400 output.webp
+

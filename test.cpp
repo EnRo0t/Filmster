@@ -5,12 +5,25 @@
 #include <vector> // Para incluir vectores
 #include "json.hpp" // Para trabajar con json (persistencia de datos)
 #include <unistd.h>
+#include <filesystem>
 
 using json = nlohmann::json;
+namespace fs = std::filesystem;
 using namespace std;
+using namespace fs;
 
 const string CAMBIOS = "Los cambios se han producido correctamente";
 
+void crearDirectorio() {
+		// Crear directorio si no existe
+		string ruta = "assets";
+		
+		if(!exists(ruta)) {
+				if(create_directory(ruta)) {
+						cout << "Se ha creado el directorio " << ruta << " con exito" << "\n";
+				}
+		}
+}
 class Pelicula {
 		//Visibilidad
 		public:
@@ -75,8 +88,16 @@ void guardarPeliculas(vector<Pelicula>& peliculas) {
 // Borrar Películas
 void borrarPeliculas(vector<Pelicula>& peliculas) {
 		int id;
-		cout << "Qué película quieres borrar (Id)" << "\n";
-		cin >> id;
+		// Bucle para comprobar que el input del usuario este dentro de rango del vector peliculas
+		do {
+				cout << "Qué película quieres borrar (Id)" << "\n";
+				cin >> id;
+				
+				if(id < 0 || id >= peliculas.size()) { 
+						cout << "El id no es valido" << "\n";
+				}
+		} while (id < 0 || id >= peliculas.size());
+
 		// Borramos la película del vector
 		peliculas.erase(peliculas.begin() + id);
 		// Cargamos la funcion guardarPeliculas para resetear el json con los cambios
@@ -114,6 +135,7 @@ void exportarPeliculas() {
 						puntuacionStar = STAR_5;
 				}
 				Registro << "###" << " " << contador << "\n";
+				Registro << "![cover](assets/" << contador << ".webp)" << "\n";
 				Registro << "Nombre: " << peliculas.at(contador).nombre << "\n";
 				Registro << "Genero: " << peliculas.at(contador).genero << "\n";
 				Registro << "Puntuacion: " << puntuacionStar << " " << puntuacion << "\n";
@@ -141,13 +163,13 @@ int cli() {
 						cout << "╔═══════════════════════════╗" << "\n";
 						cout << "║      Escoja una opción    ║" << "\n";
 						cout << "╚═══════════════════════════╝" << "\n";
-						cout << "╔═══════════════════════════╗   " << "\n";
-						cout << "║  1: Registrar película    ║   " << "\n";
-						cout << "║  2: Ver registro          ║   " << "\n";
-						cout << "║  3: Modificar película    ║   " << "\n";
-						cout << "║  4: Exportar lista        ║   " << "\n";
-						cout << "║  5: Borrar película       ║   " << "\n";
-						cout << "╚═══════════════════════════╝   " << "\n" << "\n";
+						cout << "╔═══════════════════════════╗" << "\n";
+						cout << "║  1: Registrar película    ║" << "\n";
+						cout << "║  2: Ver registro          ║" << "\n";
+						cout << "║  3: Modificar película    ║" << "\n";
+						cout << "║  4: Exportar lista        ║" << "\n";
+						cout << "║  5: Borrar película       ║" << "\n";
+						cout << "╚═══════════════════════════╝" << "\n" << "\n";
 						cin >> opcion;
 						if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4 || opcion == 5) {
 								opcionErronea = false;
@@ -181,8 +203,9 @@ void modificarPelicula() {
 		string nuevoGenero;
 		float nuevaPuntuacion;
 
-		cout << "---------------------" << "\n";
-		cout << "Que película quieres modificar. Introduce ID" << "\n";
+		cout << "────────────────────────────────────────────" << "\n";
+		cout << "¿Qué película quieres modificar? Introduce ID" << "\n";
+		cout << "────────────────────────────────────────────" << "\n";
 		cin >> id;
 		cout << "¿Qué quieres modificar?" << "\n";
 		cout << "Nombre | Genero | Puntuación" << "\n";
@@ -239,6 +262,7 @@ void prePeliculas() {
 } 
 
 int main() {
+		crearDirectorio();
 		peliculas = cargarPeliculas();
 		bool activo = true;
 		while(activo) {

@@ -1,6 +1,7 @@
 buid/
 .cache/
-peliculas.json
-peliculas.md
+buid/peliculas.json
+build/peliculas.md
 assets/
-
+build/apiToken.txt
+build/apiKey.txt

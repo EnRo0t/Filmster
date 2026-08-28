@@ -15,6 +15,19 @@ using namespace fs;
 
 const string CAMBIOS = "Los cambios se han producido correctamente";
 
+string obtenerApiToken() {
+		ifstream archivo("apiToken.txt");
+		if(!archivo.is_open()) {
+				return "El archivo no existe";
+		}
+		string token;
+		archivo >> token;
+		archivo.close();
+		return token;
+}
+
+const string APITOKEN = obtenerApiToken();
+
 void crearDirectorio() {
 		// Crear directorio si no existe
 		string ruta = "assets";

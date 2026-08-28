@@ -14,6 +14,15 @@ cmake ..
 make
 ```
 
+## API TOKEN
+
+Para poder hacer llamadas a la API de TMDB (The Movie Database) necesitaras el
+bearer token. Registrate en su página: https://www.themoviedb.org/ para
+obtenerlo.
+
+Una vez tengas el token copialo y pegalo en un archivo .txt llamado
+apiToken.txt y añadelo a la raíz del proyecto.
+
 ## ROADMAP / TASKLIST
 
 + Añadir covers de las películas mediante llamadas a la api de tmdb utilizando

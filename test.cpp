@@ -43,12 +43,12 @@ class Pelicula {
 		public:
 		//Atributos
 				string nombre;
-				string genero;
+				string comentario;
 				float puntuacion;
 				// Constructor
-				Pelicula(string n, string g, float p) {
+				Pelicula(string n, string c, float p) {
 						nombre = n;
-						genero = g;
+						comentario = c;
 						puntuacion = p;
 				}
 
@@ -73,7 +73,7 @@ vector<Pelicula> cargarPeliculas() {
     archivo.close();
     
     for (auto& item : j) {
-        Pelicula p(item["nombre"], item["genero"], item["puntuacion"]);
+        Pelicula p(item["nombre"], item["comentario"], item["puntuacion"]);
         peliculas.push_back(p);
     }
     
@@ -89,7 +89,7 @@ void guardarPeliculas(vector<Pelicula>& peliculas) {
         j.push_back({
             {"id", i},
             {"nombre", peliculas[i].nombre},
-            {"genero", peliculas[i].genero},
+            {"comentario", peliculas[i].comentario},
             {"puntuacion", peliculas[i].puntuacion}
         });
     }
@@ -151,7 +151,7 @@ void exportarPeliculas() {
 				Registro << "###" << " " << contador << "\n";
 				Registro << "![cover](assets/" << contador << ".webp)" << "\n";
 				Registro << "Nombre: " << peliculas.at(contador).nombre << "\n";
-				Registro << "Genero: " << peliculas.at(contador).genero << "\n";
+				Registro << "Comentario: " << peliculas.at(contador).comentario << "\n";
 				Registro << "Puntuacion: " << puntuacionStar << " " << puntuacion << "\n";
 				Registro << "---" << "\n";
 				contador++;
@@ -214,7 +214,7 @@ void modificarPelicula() {
 		int id;
 		string opcion;
 		string nuevoNombre;
-		string nuevoGenero;
+		string nuevoComentario;
 		float nuevaPuntuacion;
 
 		cout << "────────────────────────────────────────────" << "\n";
@@ -222,7 +222,7 @@ void modificarPelicula() {
 		cout << "────────────────────────────────────────────" << "\n";
 		cin >> id;
 		cout << "¿Qué quieres modificar?" << "\n";
-		cout << "Nombre | Genero | Puntuación" << "\n";
+		cout << "Nombre | Comentario | Puntuación" << "\n";
 		cin >> opcion;
 		if(opcion == "nombre" || opcion == "Nombre") {
 				cout << peliculas.at(id).nombre << "\n";
@@ -233,14 +233,14 @@ void modificarPelicula() {
 				cout << CAMBIOS << "\n";
 				cout << "El nuevo nombre es: " << peliculas.at(id).nombre << "\n";
 		}
-		if(opcion == "genero" || opcion == "Genero") {	
-				cout << peliculas.at(id).genero << "\n";
-				cout << "¿Qué nuevo genero quieres ponerle?" << "\n";
+		if(opcion == "comentario" || opcion == "Comentario") {	
+				cout << peliculas.at(id).comentario << "\n";
+				cout << "¿Qué nuevo comentario quieres escribir?" << "\n";
 				cin.ignore();
-				getline(cin, nuevoGenero);
-				peliculas.at(id).genero = nuevoGenero;
+				getline(cin, nuevoComentario);
+				peliculas.at(id).comentario = nuevoComentario;
 				cout << CAMBIOS << "\n";
-				cout << "El nuevo genero es: " << peliculas.at(id).genero << "\n";
+				cout << "El nuevo comentario es: " << peliculas.at(id).comentario << "\n";
 		} 
 		if(opcion == "puntuacion" || opcion == "Puntuacion") {	
 				cout << peliculas.at(id).puntuacion << "\n";
@@ -267,7 +267,7 @@ void prePeliculas() {
 				cout << "┌──────────────────────────────────┐" << "\n";
 				cout << "  Id: " << contador << "\n";
 				cout << "  Nombre: " << pelicula.nombre << "\n";
-				cout << "  Genero: " << pelicula.genero << "\n";
+				cout << "  Comentario: " << pelicula.comentario << "\n";
 				cout << "  Puntuacion: " << pelicula.puntuacion << "\n";
 				cout << "└──────────────────────────────────┘" << "\n";
 				cout << "\n";
@@ -284,14 +284,14 @@ int main() {
 				switch(opcion) {
 						case 1:{ 
 												
-								string nombre, genero;
+								string nombre, comentario;
 								float puntuacion;
 									
 								cout << "Introduce el nombre de la película" << "\n";
 								cin.ignore(); // Para limpiar el buffer
 								getline(cin, nombre); // Getline sirve para permitir espacios en el titulo
-								cout << "Introduce el genero" << "\n";
-								getline(cin, genero);
+								cout << "Introduce un comentario" << "\n";
+								getline(cin, comentario);
 								
 								do {
 										cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
@@ -302,7 +302,7 @@ int main() {
 										}
 								} while(puntuacion < 0 || puntuacion > 10);  
 				
-								Pelicula pelicula(nombre, genero, puntuacion);
+								Pelicula pelicula(nombre, comentario, puntuacion);
 								// Guardo la película dentro del vector
 								peliculas.push_back(pelicula);
 								// Guardo la película dentro del json

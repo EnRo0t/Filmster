@@ -7,13 +7,18 @@
 #include <unistd.h>
 #include <filesystem>
 #include <cpr/cpr.h>
+#include <cctype>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 using namespace std;
 using namespace fs;
 
+// Constantes
 const string CAMBIOS = "Los cambios se han producido correctamente";
+const string AFIRMATIVO[8] = {"Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
+const string NEGATIVO[4] = {"No", "NO","no", "n"};
+
 
 // Función para obtener el bearer token de la API
 string obtenerApiToken() {
@@ -225,12 +230,11 @@ bool continuar() {
     
     cout << "¿Deseas continuar?" << "\n";
     cout << "S | N" << "\n";
-    
-    cin.ignore(); // Limpia cualquier 'Enter' residual de operaciones previas
+    cin >> ws; 
     cin >> confirmacion;
 
     // Retorna true de forma directa si la condición se cumple, o false si no
-    return (confirmacion == "S" || confirmacion == "s");
+    return (ranges::contains(AFIRMATIVO, confirmacion));
 }
 
 void modificarPelicula() {
@@ -358,24 +362,43 @@ int main() {
 								getline(cin, nombre); // Getline sirve para permitir espacios en el titulo
 								cout << "¿Has visto la película?" << "\n";
 								cout << "Si | No" << "\n";
+								// Limpia el buffer de espacios en blanco
+								cin >>	ws;
 								getline(cin, check);
-								if(check == "si" || check == "Si") {
+								if(ranges::contains(AFIRMATIVO, check)) {
 										vista = true;
 								} else if(check == "no" || check == "No") {
 										vista = false;
 								}
 								if(vista == true) {
-										cout << "Introduce un comentario" << "\n";
-										getline(cin, comentario);
-								
-										do {
-												cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
-												cin >> puntuacion;
+										string respC;
+										string respP;
+										cout << "¿Quieres introducir un comentario?" << "\n";
+										cout << "Si | No" << "\n";
+										cin >> ws;
+										getline(cin, respC);
+										if(ranges::contains(AFIRMATIVO, respC)) {
+												cout << "Escribe tu comentario: " << "\n";
+												getline(cin, comentario);
+										} else {
+												comentario = " ";
+										}
+										cout << "¿Quieres introducir una puntuación?" << "\n";
+										cout << "Si | No" << "\n";
+										cin >> ws;
+										getline(cin, respP);
+										if(ranges::contains(AFIRMATIVO, respP)) {
+												do {
+														cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
+														cin >> puntuacion;
 
-												if(puntuacion < 0 || puntuacion > 10) {
-														cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
-												}
-										} while(puntuacion < 0 || puntuacion > 10);  
+														if(puntuacion < 0 || puntuacion > 10) {
+																cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
+														}
+												} while(puntuacion < 0 || puntuacion > 10);
+										} else {
+												puntuacion = 0;
+										}
 								} else {
 										comentario = " ";
 										puntuacion = 0;
@@ -403,9 +426,10 @@ int main() {
 						break;
 						case 4:{
 								string res;
-								cout << "Exportalndo peliculas..." << "\n";
+								cout << "Exportando peliculas..." << "\n";
 								sleep(1);
-								cout << "...." << "\n";
+								cout << "..." << "\n";
+								sleep(1);
 								exportarPeliculas();
 								cout << "Exportado archivo ./peliculas.md" <<
 										"\n"; 
@@ -414,9 +438,9 @@ int main() {
 								cout << "¿Quieres ver el archivo exportado?" <<
 										"\n";
 								cout << "Si | No" << "\n";
+								cin >> ws;
 								cin >> res;
-								if(res == "Si" || res == "si" ||
-												res == "s") {
+								if(ranges::contains(AFIRMATIVO, res)) {
 										verPeliculas(); 
 								} else {
 										activo = continuar();

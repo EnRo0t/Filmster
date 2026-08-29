@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.15)
 # 2. Nombre del proyecto
 project(Filmster VERSION 1.0 LANGUAGES CXX)
 
-# 3. Requerido por <filesystem> (C++17)
-set(CMAKE_CXX_STANDARD 17)
+# 3. Requerido por <filesystem> (C++20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 4. Incluir FetchContent para descargar dependencias

@@ -20,6 +20,7 @@ const string AFIRMATIVO[8] = {"Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
 const string NEGATIVO[4] = {"No", "NO","no", "n"};
 
 
+
 // Función para obtener el bearer token de la API
 string obtenerApiToken() {
 		ifstream archivo("apiToken.txt");
@@ -42,7 +43,8 @@ string obtenerApiKey() {
 		archivo.close();
 		return key;
 }
-// Constantes para almacenar token y key de la API
+
+
 const string APITOKEN = obtenerApiToken();
 const string APIKEY = obtenerApiKey();
 
@@ -56,6 +58,7 @@ void crearDirectorio() {
 				}
 		}
 }
+
 class Pelicula {
 		//Visibilidad
 		public:
@@ -71,7 +74,6 @@ class Pelicula {
 						puntuacion = p;
 						vista = v;
 				}
-
 };
 
 vector<Pelicula> peliculas;
@@ -318,30 +320,54 @@ void prePeliculas() {
 		}
 } 
 
+// Funciones de peticion a la API
 
-void buscarTMDB() {
-		string busqueda;
-		cout << "Introduce el nombre de la pelicula" << "\n";
-		getline(cin, busqueda);
-		if(busqueda.empty()) {
-				cout << "La búsqueda no puede estar vacia" << "\n";
-				return;
-		}
+// Devuelve el path del poster de la película
+string tmdbCover(string busqueda) {
+		json j;
+		string cover;
 		cpr::Response r = cpr::Get(
 						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
 						cpr::Parameters{
 								{"query", busqueda},
+								{"language", "es"},
 								{"api_key", APIKEY}
 						}
 				);
 		if(r.status_code == 200) {
-				cout << r.text << "\n";
+				// Parseamos el string de respuesta a json
+				j = json::parse(r.text);
+				cover = j["results"][0]["poster_path"];
+				return cover;
 		} else {
-				cout << "Ha habido un error" << "\n";
 				cout << r.status_code << "\n";
+				return "Ha habido un error";
 		}
 }
-
+// Devuelve el path de la sinopsis
+string tmdbSinopsis(string busqueda) {
+		json j;
+		string sinopsis;
+		cpr::Response r = cpr::Get(
+						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
+						cpr::Parameters{
+								{"query", busqueda},
+								{"language", "es"},
+								{"api_key", APIKEY}
+						}
+				);
+		if(r.status_code == 200) {
+				// Parseamos respuesta a json
+				j =  json::parse(r.text);
+				// Metemos resultado de sinopsis en string
+				sinopsis = j["results"][0]["overview"];
+				// Devolvemos dicho string
+				return sinopsis;
+		} else {
+				cout << r.status_code << "\n";
+				return "Ha habido un error";
+		}
+}
 
 int main() {
 		crearDirectorio();
@@ -410,7 +436,8 @@ int main() {
 								guardarPeliculas(peliculas);
 
 								cout << "Película registrada correctamente" << "\n";
-
+								cout << tmdbCover(pelicula.nombre) << "\n";
+								cout << tmdbSinopsis(pelicula.nombre) << "\n";
 								activo = continuar();
 						break;
 							   }

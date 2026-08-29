@@ -15,6 +15,7 @@ using namespace fs;
 
 const string CAMBIOS = "Los cambios se han producido correctamente";
 
+// Función para obtener el bearer token de la API
 string obtenerApiToken() {
 		ifstream archivo("apiToken.txt");
 		if(!archivo.is_open()) {
@@ -25,8 +26,20 @@ string obtenerApiToken() {
 		archivo.close();
 		return token;
 }
-
+// Función para obtener la API key
+string obtenerApiKey() {
+		ifstream archivo("apiKey.txt");
+		if(!archivo.is_open()) {
+				return "El archivo no existe";
+		}
+		string key;
+		archivo >> key;
+		archivo.close();
+		return key;
+}
+// Constantes para almacenar token y key de la API
 const string APITOKEN = obtenerApiToken();
+const string APIKEY = obtenerApiKey();
 
 void crearDirectorio() {
 		// Crear directorio si no existe
@@ -45,11 +58,13 @@ class Pelicula {
 				string nombre;
 				string comentario;
 				float puntuacion;
+				bool vista;
 				// Constructor
-				Pelicula(string n, string c, float p) {
+				Pelicula(string n, string c, float p, bool v) {
 						nombre = n;
 						comentario = c;
 						puntuacion = p;
+						vista = v;
 				}
 
 };
@@ -73,7 +88,7 @@ vector<Pelicula> cargarPeliculas() {
     archivo.close();
     
     for (auto& item : j) {
-        Pelicula p(item["nombre"], item["comentario"], item["puntuacion"]);
+        Pelicula p(item["nombre"], item["comentario"], item["puntuacion"], item["vista"]);
         peliculas.push_back(p);
     }
     
@@ -90,7 +105,8 @@ void guardarPeliculas(vector<Pelicula>& peliculas) {
             {"id", i},
             {"nombre", peliculas[i].nombre},
             {"comentario", peliculas[i].comentario},
-            {"puntuacion", peliculas[i].puntuacion}
+            {"puntuacion", peliculas[i].puntuacion},
+			{"vista", peliculas[i].vista}
         });
     }
     // Abrimos el archivo en modo ios::out (borramos el archivo) 
@@ -137,6 +153,12 @@ void exportarPeliculas() {
 	for(Pelicula pelicula : peliculas ) {
 				float puntuacion =  peliculas.at(contador).puntuacion;
 			    string puntuacionStar;
+				string check;
+				if(peliculas.at(contador).vista == true) { 
+						check = "Sí";
+				} else {
+						check = "No";
+				}
 				if(puntuacion <= 2) {
 						puntuacionStar = STAR_1;
 				}else if(puntuacion <= 4) {
@@ -153,6 +175,7 @@ void exportarPeliculas() {
 				Registro << "Nombre: " << peliculas.at(contador).nombre << "\n";
 				Registro << "Comentario: " << peliculas.at(contador).comentario << "\n";
 				Registro << "Puntuacion: " << puntuacionStar << " " << puntuacion << "\n";
+				Registro << "Vista: " << check << "\n";
 				Registro << "---" << "\n";
 				contador++;
 				
@@ -222,7 +245,7 @@ void modificarPelicula() {
 		cout << "────────────────────────────────────────────" << "\n";
 		cin >> id;
 		cout << "¿Qué quieres modificar?" << "\n";
-		cout << "Nombre | Comentario | Puntuación" << "\n";
+		cout << "Nombre | Comentario | Puntuación | Vista" << "\n";
 		cin >> opcion;
 		if(opcion == "nombre" || opcion == "Nombre") {
 				cout << peliculas.at(id).nombre << "\n";
@@ -258,22 +281,63 @@ void modificarPelicula() {
 				cout << CAMBIOS << "\n";
 				cout << "La nueva puntuacion es: " << peliculas.at(id).puntuacion << "\n";
 		}
+		if(opcion == "vista" || opcion == "Vista") {
+				cout << peliculas.at(id).vista << "\n";
+				cout << "Cambiando estado..." << "\n";
+				if(peliculas.at(id).vista == true) {
+						peliculas.at(id).vista = false;
+				} else {
+						peliculas.at(id).vista = true;
+				}
+				cout << "Cambio realizado, nuevo estado" << peliculas.at(id).vista << "\n";
+		}
 }
 
 void prePeliculas() {
 		int contador = 0;
+		string check;
 		for(Pelicula pelicula : peliculas) {
-
+		if(pelicula.vista == true) {
+				check = "Sí";
+		} else {
+				check = "No";
+		}
 				cout << "┌──────────────────────────────────┐" << "\n";
 				cout << "  Id: " << contador << "\n";
 				cout << "  Nombre: " << pelicula.nombre << "\n";
 				cout << "  Comentario: " << pelicula.comentario << "\n";
 				cout << "  Puntuacion: " << pelicula.puntuacion << "\n";
+				cout << "  Vista: " << check << "\n";
 				cout << "└──────────────────────────────────┘" << "\n";
 				cout << "\n";
 				contador++;
 		}
 } 
+
+
+void buscarTMDB() {
+		string busqueda;
+		cout << "Introduce el nombre de la pelicula" << "\n";
+		getline(cin, busqueda);
+		if(busqueda.empty()) {
+				cout << "La búsqueda no puede estar vacia" << "\n";
+				return;
+		}
+		cpr::Response r = cpr::Get(
+						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
+						cpr::Parameters{
+								{"query", busqueda},
+								{"api_key", APIKEY}
+						}
+				);
+		if(r.status_code == 200) {
+				cout << r.text << "\n";
+		} else {
+				cout << "Ha habido un error" << "\n";
+				cout << r.status_code << "\n";
+		}
+}
+
 
 int main() {
 		crearDirectorio();
@@ -286,23 +350,37 @@ int main() {
 												
 								string nombre, comentario;
 								float puntuacion;
-									
+								string check;
+								bool vista;
+
 								cout << "Introduce el nombre de la película" << "\n";
 								cin.ignore(); // Para limpiar el buffer
 								getline(cin, nombre); // Getline sirve para permitir espacios en el titulo
-								cout << "Introduce un comentario" << "\n";
-								getline(cin, comentario);
+								cout << "¿Has visto la película?" << "\n";
+								cout << "Si | No" << "\n";
+								getline(cin, check);
+								if(check == "si" || check == "Si") {
+										vista = true;
+								} else if(check == "no" || check == "No") {
+										vista = false;
+								}
+								if(vista == true) {
+										cout << "Introduce un comentario" << "\n";
+										getline(cin, comentario);
 								
-								do {
-										cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
-										cin >> puntuacion;
+										do {
+												cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
+												cin >> puntuacion;
 
-										if(puntuacion < 0 || puntuacion > 10) {
-												cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
-										}
-								} while(puntuacion < 0 || puntuacion > 10);  
-				
-								Pelicula pelicula(nombre, comentario, puntuacion);
+												if(puntuacion < 0 || puntuacion > 10) {
+														cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
+												}
+										} while(puntuacion < 0 || puntuacion > 10);  
+								} else {
+										comentario = " ";
+										puntuacion = 0;
+								}
+								Pelicula pelicula(nombre, comentario, puntuacion, vista);
 								// Guardo la película dentro del vector
 								peliculas.push_back(pelicula);
 								// Guardo la película dentro del json

@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <cpr/cpr.h>
 #include <cctype>
+#include <map>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -319,8 +320,41 @@ void prePeliculas() {
 				contador++;
 		}
 } 
-
+// Inicialización del map con los generos
+map<int, string> generos;
 // Funciones de peticion a la API
+
+// Devuelve map con lista de generos por id
+string tmdbGenre(int id) {
+		json j;
+		cpr::Response r = cpr::Get(
+						cpr::Url{"https://api.themoviedb.org/3/genre/movie/list"},
+						cpr::Parameters{
+								{"language","es"},
+								{"api_key", APIKEY}
+						}
+				);
+		if(r.status_code == 200) {
+				// Convertimos respuesta a un string tipo json
+				j = json::parse(r.text);
+				// Limpiar mapa
+				generos.clear();
+				// Iteramos sobre el map genres y vamos metiendo los resultados del json
+				for(const auto& elemento : j["genres"]) {
+						int genre_id = elemento["id"].get<int>();
+						string genre_name = elemento["name"].get<string>();
+
+						generos[genre_id] = genre_name;
+				}
+				// Devolvemos el valor asociado a la clave = id
+				cout << generos.at(id);
+				return generos.at(id);
+		} else {
+				// Si falla, devolvemos un string con un aviso
+				cout << r.status_code << "\n";
+				return "Ha habido un error en la petición a la API";
+		}
+}
 
 // Devuelve el path del poster de la película
 string tmdbCover(string busqueda) {
@@ -368,6 +402,7 @@ string tmdbSinopsis(string busqueda) {
 				return "Ha habido un error";
 		}
 }
+
 
 int main() {
 		crearDirectorio();

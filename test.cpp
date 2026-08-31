@@ -339,9 +339,10 @@ int cli() {
 						cout << "║  3: Modificar película    ║" << "\n";
 						cout << "║  4: Exportar lista        ║" << "\n";
 						cout << "║  5: Borrar película       ║" << "\n";
+						cout << "║  6: Salir                 ║" << "\n";
 						cout << "╚═══════════════════════════╝" << "\n" << "\n";
 						cin >> opcion;
-						if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4 || opcion == 5) {
+						if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4 || opcion == 5 || opcion == 6) {
 								opcionErronea = false;
 						} else {
 								cout << "Introduce una opción válida" << "\n";
@@ -556,9 +557,12 @@ int main() {
 							   
 						break;
 							   }
+						case 6:{
+								cout << "Bye Bye" << "\n";
+								activo = false;
+							   }
 							   
 						default:
-						cout << "Bye Bye" << "\n";
 						activo = false;
 						break;
 				

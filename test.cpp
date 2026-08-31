@@ -145,6 +145,118 @@ void borrarPeliculas(vector<Pelicula>& peliculas) {
 }
 
 
+
+/* ------------------------------------------------------------ */
+/*			       PETICIONES A LA API DE TMDB					*/
+/*--------------------------------------------------------------*/
+
+// Inicialización del map con los generos
+map<int, string> generos;
+
+// Devuelve el path del poster de la película
+string tmdbCover(string busqueda) {
+		json j;
+		string cover;
+		cpr::Response r = cpr::Get(
+						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
+						cpr::Parameters{
+								{"query", busqueda},
+								{"language", "es"},
+								{"api_key", APIKEY}
+						}
+				);
+		if(r.status_code == 200) {
+				// Parseamos el string de respuesta a json
+				j = json::parse(r.text);
+				cover = j["results"][0]["poster_path"];
+				return cover;
+		} else {
+				cout << r.status_code << "\n";
+				return "Ha habido un error";
+		}
+}
+// Devuelve el path de la sinopsis
+string tmdbSinopsis(string busqueda) {
+		json j;
+		string sinopsis;
+		cpr::Response r = cpr::Get(
+						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
+						cpr::Parameters{
+								{"query", busqueda},
+								{"language", "es"},
+								{"api_key", APIKEY}
+						}
+				);
+		if(r.status_code == 200) {
+				// Parseamos respuesta a json
+				j =  json::parse(r.text);
+				// Metemos resultado de sinopsis en string
+				sinopsis = j["results"][0]["overview"];
+				// Devolvemos dicho string
+				return sinopsis;
+		} else {
+				cout << r.status_code << "\n";
+				return "Ha habido un error";
+		}
+}
+
+// Devuelve el id del genero
+int tmdbGenreID(string busqueda) {
+		json j;
+		int genreID;
+		cpr::Response r = cpr::Get(
+						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
+						cpr::Parameters{
+								{"query", busqueda},
+								{"language", "es"},
+								{"api_key", APIKEY}
+						}
+				);
+		if(r.status_code == 200) {
+				// Parseamos respuesta a json
+				j =  json::parse(r.text);
+				// Metemos resultado de genre ids en un int (solo el primer elemento del primer resultado, de ahí esos 0's
+				genreID = j["results"][0]["genre_ids"][0].get<int>();
+				// Devolvemos dicho string
+				return genreID;
+		} else {
+				cout << r.status_code << "\n";
+				return 0;
+		}
+}
+
+// Devuelve un string con el genero
+string tmdbGenre(int id) {
+		json j;
+		cpr::Response r = cpr::Get(
+						cpr::Url{"https://api.themoviedb.org/3/genre/movie/list"},
+						cpr::Parameters{
+								{"language","es"},
+								{"api_key", APIKEY}
+						}
+				);
+		if(r.status_code == 200) {
+				// Convertimos respuesta a un string tipo json
+				j = json::parse(r.text);
+				// Limpiar mapa
+				generos.clear();
+				// Iteramos sobre el map genres y vamos metiendo los resultados del json
+				for(const auto& elemento : j["genres"]) {
+						int genre_id = elemento["id"].get<int>();
+						string genre_name = elemento["name"].get<string>();
+
+						generos[genre_id] = genre_name;
+				}
+				// Devolvemos el valor asociado a la clave = id
+				cout << generos.at(id);
+				return generos.at(id);
+		} else {
+				// Si falla, devolvemos un string con un aviso
+				cout << r.status_code << "\n";
+				return "Ha habido un error en la petición a la API";
+		}
+}
+
 // Sirve para exportar en .md la lista de películas
 void exportarPeliculas() {
     const string STAR_1 = "■";
@@ -162,6 +274,17 @@ void exportarPeliculas() {
 				float puntuacion =  peliculas.at(contador).puntuacion;
 			    string puntuacionStar;
 				string check;
+				// Comprobar genero
+				int gen;
+				string genero;
+				gen = tmdbGenreID(peliculas.at(contador).nombre);
+				genero = tmdbGenre(gen);
+				// Comprobar path de la imagen
+				string img_path;
+				img_path = tmdbCover(peliculas.at(contador).nombre);
+				// Comprobar sinopsis
+				string sinopsis;
+				sinopsis = tmdbSinopsis(peliculas.at(contador).nombre);
 				if(peliculas.at(contador).vista == true) { 
 						check = "Sí";
 				} else {
@@ -179,8 +302,10 @@ void exportarPeliculas() {
 						puntuacionStar = STAR_5;
 				}
 				Registro << "###" << " " << contador << "\n";
-				Registro << "![cover](assets/" << contador << ".webp)" << "\n";
+				Registro << "![cover](https://image.tmdb.org/t/p/w600_and_h900_face/" << img_path << ")" << "\n";
 				Registro << "Nombre: " << peliculas.at(contador).nombre << "\n";
+				Registro << "Genero: " << genero << "\n";
+				Registro << "Sinopsis: " << sinopsis << "\n";
 				Registro << "Comentario: " << peliculas.at(contador).comentario << "\n";
 				Registro << "Puntuacion: " << puntuacionStar << " " << puntuacion << "\n";
 				Registro << "Vista: " << check << "\n";
@@ -320,89 +445,6 @@ void prePeliculas() {
 				contador++;
 		}
 } 
-// Inicialización del map con los generos
-map<int, string> generos;
-// Funciones de peticion a la API
-
-// Devuelve map con lista de generos por id
-string tmdbGenre(int id) {
-		json j;
-		cpr::Response r = cpr::Get(
-						cpr::Url{"https://api.themoviedb.org/3/genre/movie/list"},
-						cpr::Parameters{
-								{"language","es"},
-								{"api_key", APIKEY}
-						}
-				);
-		if(r.status_code == 200) {
-				// Convertimos respuesta a un string tipo json
-				j = json::parse(r.text);
-				// Limpiar mapa
-				generos.clear();
-				// Iteramos sobre el map genres y vamos metiendo los resultados del json
-				for(const auto& elemento : j["genres"]) {
-						int genre_id = elemento["id"].get<int>();
-						string genre_name = elemento["name"].get<string>();
-
-						generos[genre_id] = genre_name;
-				}
-				// Devolvemos el valor asociado a la clave = id
-				cout << generos.at(id);
-				return generos.at(id);
-		} else {
-				// Si falla, devolvemos un string con un aviso
-				cout << r.status_code << "\n";
-				return "Ha habido un error en la petición a la API";
-		}
-}
-
-// Devuelve el path del poster de la película
-string tmdbCover(string busqueda) {
-		json j;
-		string cover;
-		cpr::Response r = cpr::Get(
-						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
-						cpr::Parameters{
-								{"query", busqueda},
-								{"language", "es"},
-								{"api_key", APIKEY}
-						}
-				);
-		if(r.status_code == 200) {
-				// Parseamos el string de respuesta a json
-				j = json::parse(r.text);
-				cover = j["results"][0]["poster_path"];
-				return cover;
-		} else {
-				cout << r.status_code << "\n";
-				return "Ha habido un error";
-		}
-}
-// Devuelve el path de la sinopsis
-string tmdbSinopsis(string busqueda) {
-		json j;
-		string sinopsis;
-		cpr::Response r = cpr::Get(
-						cpr::Url{"https://api.themoviedb.org/3/search/movie"},
-						cpr::Parameters{
-								{"query", busqueda},
-								{"language", "es"},
-								{"api_key", APIKEY}
-						}
-				);
-		if(r.status_code == 200) {
-				// Parseamos respuesta a json
-				j =  json::parse(r.text);
-				// Metemos resultado de sinopsis en string
-				sinopsis = j["results"][0]["overview"];
-				// Devolvemos dicho string
-				return sinopsis;
-		} else {
-				cout << r.status_code << "\n";
-				return "Ha habido un error";
-		}
-}
-
 
 int main() {
 		crearDirectorio();
@@ -471,8 +513,6 @@ int main() {
 								guardarPeliculas(peliculas);
 
 								cout << "Película registrada correctamente" << "\n";
-								cout << tmdbCover(pelicula.nombre) << "\n";
-								cout << tmdbSinopsis(pelicula.nombre) << "\n";
 								activo = continuar();
 						break;
 							   }

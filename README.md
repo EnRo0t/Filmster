@@ -20,7 +20,8 @@ software que no entienda.
 
 ```sh
 git clone https://github.com/EnRo0t/Filmster.git && cd Filmster
-sudo apt update && sudo apt install cmake
+sudo apt update 
+sudo apt install build-essential libgtk-3-dev cmake
 mkdir build
 cd build
 cmake ..
@@ -36,6 +37,14 @@ para obtenerlos.
 Una vez tengas el token cópialo y pégalo en un archivo .txt llamado
 apiToken.txt y la key en un archivo llamado apiKey.txt, y añade ambos al
 directorio build en la raíz del proyecto.
+
+## EJECUCION
+
+En /build
+
+```sh
+./peliculas.app
+```
 
 ## ROADMAP / TASKLIST
 

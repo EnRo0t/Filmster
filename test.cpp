@@ -17,8 +17,8 @@ using namespace fs;
 
 // Constantes
 const string CAMBIOS = "Los cambios se han producido correctamente";
-const string AFIRMATIVO[8] = {"Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
-const string NEGATIVO[4] = {"No", "NO","no", "n"};
+const string AFIRMATIVO[9] = {"S","Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
+const string NEGATIVO[5] = {"N","No","NO","no","n"};
 
 
 
@@ -171,7 +171,6 @@ string tmdbCover(string busqueda) {
 				cover = j["results"][0]["poster_path"];
 				return cover;
 		} else {
-				cout << r.status_code << "\n";
 				return "Ha habido un error";
 		}
 }
@@ -195,7 +194,6 @@ string tmdbSinopsis(string busqueda) {
 				// Devolvemos dicho string
 				return sinopsis;
 		} else {
-				cout << r.status_code << "\n";
 				return "Ha habido un error";
 		}
 }
@@ -220,7 +218,6 @@ int tmdbGenreID(string busqueda) {
 				// Devolvemos dicho string
 				return genreID;
 		} else {
-				cout << r.status_code << "\n";
 				return 0;
 		}
 }
@@ -248,11 +245,9 @@ string tmdbGenre(int id) {
 						generos[genre_id] = genre_name;
 				}
 				// Devolvemos el valor asociado a la clave = id
-				cout << generos.at(id);
 				return generos.at(id);
 		} else {
 				// Si falla, devolvemos un string con un aviso
-				cout << r.status_code << "\n";
 				return "Ha habido un error en la petición a la API";
 		}
 }

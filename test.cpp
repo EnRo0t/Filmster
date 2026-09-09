@@ -386,9 +386,10 @@ void modificarPelicula() {
 				cout << "║  2: Modificar comentario  ║" << "\n";
 				cout << "║  3: Modificar puntuación  ║" << "\n";
 				cout << "║  4: Modificar vista       ║" << "\n";
+				cout << "║  5: Salir                 ║" << "\n";
 				cout << "╚═══════════════════════════╝" << "\n" << "\n";
 				cin >> opcion;
-				if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4) {
+				if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4 || opcion == 5) {
 						
 						if(opcion == 1) {
 								cout << peliculas.at(id).nombre << "\n";
@@ -433,6 +434,9 @@ void modificarPelicula() {
 										peliculas.at(id).vista = true;
 								}
 								cout << "Cambio realizado, nuevo estado" << peliculas.at(id).vista << "\n";
+						}
+						if(opcion == 5) {
+								opcionErronea = false;
 						}
 						opcionErronea = false;		
 				} else {

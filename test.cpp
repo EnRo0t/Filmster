@@ -368,61 +368,78 @@ bool continuar() {
 
 void modificarPelicula() {
 		int id;
-		string opcion;
+		int opcion;
+		bool opcionErronea = true;
 		string nuevoNombre;
 		string nuevoComentario;
 		float nuevaPuntuacion;
-
-		cout << "────────────────────────────────────────────" << "\n";
-		cout << "¿Qué película quieres modificar? Introduce ID" << "\n";
-		cout << "────────────────────────────────────────────" << "\n";
-		cin >> id;
-		cout << "¿Qué quieres modificar?" << "\n";
-		cout << "Nombre | Comentario | Puntuación | Vista" << "\n";
-		cin >> opcion;
-		if(opcion == "nombre" || opcion == "Nombre") {
-				cout << peliculas.at(id).nombre << "\n";
-				cout << "¿Qué nuevo nombre quieres ponerle?" << "\n";
-				cin.ignore();
-				getline(cin, nuevoNombre);
-				peliculas.at(id).nombre = nuevoNombre;
-				cout << CAMBIOS << "\n";
-				cout << "El nuevo nombre es: " << peliculas.at(id).nombre << "\n";
-		}
-		if(opcion == "comentario" || opcion == "Comentario") {	
-				cout << peliculas.at(id).comentario << "\n";
-				cout << "¿Qué nuevo comentario quieres escribir?" << "\n";
-				cin.ignore();
-				getline(cin, nuevoComentario);
-				peliculas.at(id).comentario = nuevoComentario;
-				cout << CAMBIOS << "\n";
-				cout << "El nuevo comentario es: " << peliculas.at(id).comentario << "\n";
-		} 
-		if(opcion == "puntuacion" || opcion == "Puntuacion") {	
-				cout << peliculas.at(id).puntuacion << "\n";
-				cout << "¿Qué nueva puntuacion quieres ponerle?" << "\n";
-				cin >> nuevaPuntuacion;
-				do {
-						cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
-						cin >> nuevaPuntuacion;
-
-						if(nuevaPuntuacion < 0 || nuevaPuntuacion > 10) {
-								cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
+		while(opcionErronea) {
+				cout << "╔═══════════════════════════════════════════════╗" << "\n";
+				cout << "║ ¿Qué película quieres modificar? Introduce ID ║" << "\n";
+				cout << "╚═══════════════════════════════════════════════╝ " << "\n";
+				cin >> id;
+				cout << "╔═══════════════════════════╗" << "\n";
+				cout << "║      Escoja una opción    ║" << "\n";
+				cout << "╚═══════════════════════════╝" << "\n";	
+				cout << "╔═══════════════════════════╗" << "\n";
+				cout << "║  1: Modificar nombre      ║" << "\n";
+				cout << "║  2: Modificar comentario  ║" << "\n";
+				cout << "║  3: Modificar puntuación  ║" << "\n";
+				cout << "║  4: Modificar vista       ║" << "\n";
+				cout << "╚═══════════════════════════╝" << "\n" << "\n";
+				cin >> opcion;
+				if(opcion == 1 || opcion == 2 || opcion == 3 || opcion == 4) {
+						
+						if(opcion == 1) {
+								cout << peliculas.at(id).nombre << "\n";
+								cout << "¿Qué nuevo nombre quieres ponerle?" << "\n";
+								cin.ignore();
+								getline(cin, nuevoNombre);
+								peliculas.at(id).nombre = nuevoNombre;
+								cout << CAMBIOS << "\n";
+								cout << "El nuevo nombre es: " << peliculas.at(id).nombre << "\n";
 						}
-				} while(nuevaPuntuacion < 0 || nuevaPuntuacion > 10);  
-				peliculas.at(id).puntuacion = nuevaPuntuacion;
-				cout << CAMBIOS << "\n";
-				cout << "La nueva puntuacion es: " << peliculas.at(id).puntuacion << "\n";
-		}
-		if(opcion == "vista" || opcion == "Vista") {
-				cout << peliculas.at(id).vista << "\n";
-				cout << "Cambiando estado..." << "\n";
-				if(peliculas.at(id).vista == true) {
-						peliculas.at(id).vista = false;
+						if(opcion == 2) {	
+								cout << peliculas.at(id).comentario << "\n";
+								cout << "¿Qué nuevo comentario quieres escribir?" << "\n";
+								cin.ignore();
+								getline(cin, nuevoComentario);
+								peliculas.at(id).comentario = nuevoComentario;
+								cout << CAMBIOS << "\n";
+								cout << "El nuevo comentario es: " << peliculas.at(id).comentario << "\n";
+						} 
+						if(opcion == 3 || opcion == 3) {	
+								cout << peliculas.at(id).puntuacion << "\n";
+								cout << "¿Qué nueva puntuacion quieres ponerle?" << "\n";
+								cin >> nuevaPuntuacion;
+								do {
+										cout << "Introduce la puntuación en decimal ( ej: 5.0)" << "\n";
+										cin >> nuevaPuntuacion;
+
+										if(nuevaPuntuacion < 0 || nuevaPuntuacion > 10) {
+												cout << "Introduce la puntuacion debe estar entre 0 y 10" << "\n";
+										}
+								} while(nuevaPuntuacion < 0 || nuevaPuntuacion > 10);  
+								peliculas.at(id).puntuacion = nuevaPuntuacion;
+								cout << CAMBIOS << "\n";
+								cout << "La nueva puntuacion es: " << peliculas.at(id).puntuacion << "\n";
+						}
+						if(opcion == 4 || opcion == 4) {
+								cout << peliculas.at(id).vista << "\n";
+								cout << "Cambiando estado..." << "\n";
+								if(peliculas.at(id).vista == true) {
+										peliculas.at(id).vista = false;
+								} else {
+										peliculas.at(id).vista = true;
+								}
+								cout << "Cambio realizado, nuevo estado" << peliculas.at(id).vista << "\n";
+						}
+						opcionErronea = false;		
 				} else {
-						peliculas.at(id).vista = true;
+						cout << "Introduce una opción válida" << "\n";
+						cin.clear(); // Borramos buffer de entrada
+						cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Para ignorar valores no INT 
 				}
-				cout << "Cambio realizado, nuevo estado" << peliculas.at(id).vista << "\n";
 		}
 }
 

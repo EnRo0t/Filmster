@@ -17,8 +17,8 @@ using namespace fs;
 
 // Constantes
 const string CAMBIOS = "Los cambios se han producido correctamente";
-const string AFIRMATIVO[8] = {"S","Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
-const string NEGATIVO[4] = {"N","No", "NO","no", "n"};
+const string AFIRMATIVO[9] = {"S","Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
+const string NEGATIVO[5] = {"N","No", "NO","no", "n"};
 
 
 
@@ -429,6 +429,10 @@ void modificarPelicula() {
 void prePeliculas() {
 		int contador = 0;
 		string check;
+		if(peliculas.empty()) {
+				cout << "No hay películas registradas" << "\n";
+				return;
+		}
 		for(Pelicula pelicula : peliculas) {
 		if(pelicula.vista == true) {
 				check = "Sí";

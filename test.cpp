@@ -17,8 +17,8 @@ using namespace fs;
 
 // Constantes
 const string CAMBIOS = "Los cambios se han producido correctamente";
-const string AFIRMATIVO[8] = {"Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
-const string NEGATIVO[4] = {"No", "NO","no", "n"};
+const string AFIRMATIVO[8] = {"S","Si", "SI", "si", "s","YES", "Yes", "yes", "y"};
+const string NEGATIVO[4] = {"N","No", "NO","no", "n"};
 
 
 

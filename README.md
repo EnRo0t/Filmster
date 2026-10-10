@@ -2,19 +2,11 @@
 
 ## ¿QUÉ ES FILMSTER?
 
-Filmster es un software para realizar listas de películas y poder exportarlas a -de momento- formato markdown.
+Filmster es un software para realizar listas de películas y poder exportarlas a
+formato markdown.
 
-En el futuro quiero añadir la exportación a pdf.
-
-## OBJETIVOS
-
-Este es un proyecto de aprendizaje para entender las bases de C++.
-Este proyecto lo estoy realizando utilizando la IA solamente como
-consulta -a modo de buscador rápido- para forzarme a resolver los
-diferentes problemas de programación por mi mismo. El objetivo es
-aprender y entrenar la mente en la resolución de problemas. 
-No hay algoritmo, función o estructura de datos incluidos en este
-software que no entienda. 
+El proyecto nace de mi obsesión por mantener mi información de manera local y
+en formato texto plano, como medida de independencia y resilencia digital. 
 
 ## INSTALACIÓN
 
@@ -39,13 +31,9 @@ directorio build en la raíz del proyecto.
 
 ## ROADMAP / TASKLIST
 
-+ ~~Añadir covers de las películas mediante llamadas a la api de tmdb
-  utilizando la libreria CPR.~~
-+ ~~Añadir genero de la película mediante llamada a la api de tmdb~~
-+ ~~Añadir sinopsis de la película medienta llamada a la api de tmdb~~
-+ Añadir exportación a PDF
-+ Descargar imagen de portada en local
+**Versión 0.2**
 
-
++ Añadir una TUI mediante la librería FTXUI
++ Refactorización de código 
 
 
